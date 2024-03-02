@@ -6,7 +6,7 @@ import { useUpdate } from '@refinedev/core';
 
 
 const CreateVariableModal = ({ visible, setVisible,onCreate, onCancel ,scenarioid,variabledata}) => {
-  console.log("variabledata",variabledata)
+  // console.log("variabledata",variabledata)
   const { mutate } = useUpdate();
 
   
