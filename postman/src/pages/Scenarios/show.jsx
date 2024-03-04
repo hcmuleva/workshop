@@ -6,6 +6,7 @@ import CreateStepModal from "./CreateStepModal";
 import { useState } from "react";
 import CreateVariableModal from "./CreateVariableModal";
 import RunStepModal from "./RunStepModal";
+import RunScenarioModel from "./runScenarioModel";
 
 const { Title, Text } = Typography;
 const { Meta } = Card;
@@ -14,6 +15,7 @@ export const ScenarioShow = () => {
   const [variableVisible, setVariableVisible] = useState(false)
   const [visible, setVisible] = useState(false)
   const [stepVisible, setStepVisible] = useState(false)
+  const [runModalOpen, setRunModalOpen] = useState(false)
   const { mutate } = useUpdate();
   const [selectedStepData,setSelectedStepData]=useState()
   const columns = [
@@ -117,13 +119,14 @@ export const ScenarioShow = () => {
   return (
 
     <Show isLoading={isLoading}>
-      <Card bordered={false} style={{ width: 300 }}>
+      <Card bordered={false} style={{ width: 500 }}>
 
         <Meta title={record?.name} description={record?.description} />
         <br />
         <Space>
           <Button type="dashed" primary onClick={() => { setVariableVisible(true) }}>Create Variable</Button>
           <Button type="dashed" primary onClick={() => { setVisible(true) }}>Create Step</Button>
+          <Button type="dashed" primary onClick={()=>{setRunModalOpen(true)}} >Run Scenario</Button>
         </Space>
       </Card>
       <br />
@@ -136,6 +139,7 @@ export const ScenarioShow = () => {
       <CreateVariableModal visible={variableVisible} setVisible={setVariableVisible} scenarioid={record.id} variabledata={record.variables} />
       <CreateStepModal visible={visible} setVisible={setVisible} scenarioid={record.id} />
       <RunStepModal visible={stepVisible} setVisible={setStepVisible}  variabledata={record.variables} stepData={selectedStepData} setStepData={setSelectedStepData}/>
+      <RunScenarioModel runModalOpen={runModalOpen} setRunModalOpen={setRunModalOpen} scenarioid={record.id}></RunScenarioModel>
       <br />
 
       <Table columns={columns} dataSource={record?.steps ?? []} pagination={false} />;

@@ -18,7 +18,7 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
         setVariables([...variables, { name: '', value: '' }]);
     };
 
-    const handleRemoveVariable = index => {
+    const handleRemoveVariable = (index) => {
         const updatedVariables = [...variables];
         updatedVariables.splice(index, 1);
         setVariables(updatedVariables);
@@ -28,14 +28,14 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
         setHeaderVariables([...headerVariables, { name: '', value: '' }]);
     };
 
-    const handleHeaderRemoveVariable = index => {
+    const handleHeaderRemoveVariable = (index) => {
         const updatedHeaderVariables = [...headerVariables];
         updatedHeaderVariables.splice(index, 1);
         setHeaderVariables(updatedHeaderVariables);
     };
 
     const onFinish = (values) => {
-        // console.log("OnFinishvalues", values)
+        console.log("OnFinishvalues", values)
         // console.log("ddd");
         const { headers, payload, url, requesttype } = values
         let axiosRequest;
@@ -57,7 +57,7 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
         }
 
         // Send the request and handle the response
-        axiosRequest.then(response => {
+        axiosRequest.then((response) => {
             console.log('Response:', response.data);
             mutate(
                 {
@@ -131,17 +131,7 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
             okText="Run Step"
             cancelText="Cancel"
             onCancel={() => { setVisible(false) }}
-            onOk={() => {
-                form
-                    .validateFields()
-                    .then(values => {
-                        console.log("OnOKvalues", values)
-                        onFinish(values);
-                    })
-                    .catch(info => {
-                        console.log('Validate Failed:', info);
-                    });
-            }}
+            
             // Add an additional button along with Ok and Cancel
             footer={[
                 <Button type="primary" key="additionalButton" onClick={handleEdit}>
@@ -150,7 +140,18 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
                 <Button key="cancel" onClick={() => setVisible(false)}>
                     Cancel
                 </Button>,
-                <Button key="submit" type="primary" onClick={form.submit}>
+                <Button key="submit" type="primary" onClick={() => {
+                 
+                    form
+                        .validateFields()
+                        .then(values => {
+                            console.log("OnOKvalues", values)
+                            onFinish(values);
+                        })
+                        .catch(info => {
+                            console.log('Validate Failed:', info);
+                        });
+                }}>
                     Ok
                 </Button>
             ]}
