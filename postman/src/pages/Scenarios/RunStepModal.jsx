@@ -9,11 +9,11 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
     // console.log("variabledata", variabledata)
     const { mutate } = useUpdate();
     const [form] = Form.useForm();
-    const [variables, setVariables] = useState(variabledata ?? []);
+    const [variables, setVariables] = useState([]);
 
     const [headerVariables, setHeaderVariables] = useState(variabledata ?? []);
-    form.setFieldsValue({ variables: variabledata });
-
+    // form.setFieldsValue({ variables: variabledata });
+    
     const handleAddVariable = () => {
         setVariables([...variables, { name: '', value: '' }]);
     };
@@ -78,6 +78,7 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
         form.resetFields();
         setStepData()
         setVariables([]);
+        setHeaderVariables([])
         setVisible(false);
     };
 
@@ -99,6 +100,7 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
                   form.resetFields();
                   setStepData()
                   setVariables([]);
+                  setHeaderVariables([])
                   setVisible(false);
                   window.location.reload()
                 },
@@ -119,7 +121,7 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
             url: stepData?.url,
             payload: stepData?.payload
         })
-        setHeaderVariables(stepData?.header)
+        setHeaderVariables(stepData?.header ?? [])
     }, [stepData])
 
 
@@ -234,11 +236,11 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
                     {variables.map((variable, index) => (
                         <div key={index} style={{ marginBottom: 8 }}>
                             <Form.Item
-                                name="url"
+                                name="step_variable"
                                 label
                                 style={{ display: 'inline-block', width: 'calc(30% - 16px)', marginRight: 8 }}
                             >
-                                <Input placeholder="URL" />
+                                <Input placeholder="variable name"/>
                             </Form.Item>
                             <Form.Item
                                 name={['variables', index, 'value']}
