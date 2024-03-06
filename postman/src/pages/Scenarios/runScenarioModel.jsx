@@ -54,7 +54,7 @@ const RunScenarioModel = ({ runModalOpen, setRunModalOpen,scenarioid }) => {
                         label="User number"
                         name="un"
                         style={{ marginBottom: 0, width: '70%' }}
-                        rules={[{ required: true, message: 'Please enter user number' }]}
+                        rules={[{ required: false, message: 'Please enter user number' }]}
                     >
                         <InputNumber min={1} style={{ width: '100%' }} />
                     </Form.Item>
@@ -62,7 +62,7 @@ const RunScenarioModel = ({ runModalOpen, setRunModalOpen,scenarioid }) => {
                         label="Duration (seconds)"
                         name="duration"
                         style={{ marginBottom: 0, width: '70%' }}
-                        rules={[{ required: true, message: 'Please enter duration in seconds' }]}
+                        rules={[{ required: false, message: 'Please enter duration in seconds' }]}
                     >
                         <InputNumber min={1} step={1} style={{ width: '100%' }} />
                     </Form.Item>

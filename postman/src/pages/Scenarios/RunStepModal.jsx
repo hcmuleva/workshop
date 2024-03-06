@@ -36,18 +36,20 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
 
     const onFinish = (values) => {
         console.log("OnFinishvalues", values)
+        
         // console.log("ddd");
         const { headers, payload, url, requesttype } = values
         let axiosRequest;
+        
         switch (requesttype.toUpperCase()) {
             case 'GET':
                 axiosRequest = axios.get(url, { headers });
                 break;
             case 'POST':
-                axiosRequest = axios.post(url, payload, { headers });
+                axiosRequest = axios.post(url,JSON.parse(payload), { headers });
                 break;
             case 'PUT':
-                axiosRequest = axios.put(url, payload, { headers });
+                axiosRequest = axios.put(url,JSON.parse(payload), { headers });
                 break;
             case 'DELETE':
                 axiosRequest = axios.delete(url, { headers });
@@ -84,7 +86,6 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
 
     const handleEdit = () => {
         const values = form.getFieldsValue()
-        console.log(values);
         mutate(
             {
                 resource: "steps",

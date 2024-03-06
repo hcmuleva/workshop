@@ -28,6 +28,7 @@ const CreateStepModal = ({ visible, setVisible, onCreate, onCancel, scenarioid }
   const onFinish = values => {
     console.log("OnFinishvalues headerVariables", headerVariables);
     console.log("OnFinishvalues", values);
+    
     const payloaddata = { ...values, header: headerVariables, scenario: scenarioid }
     console.log("payloaddata", payloaddata);
     mutate(

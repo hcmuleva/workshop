@@ -12,7 +12,7 @@ const CreateVariableModal = ({ visible, setVisible, onCreate, onCancel, scenario
 
 
   const [form] = Form.useForm();
-  const [variables, setVariables] = useState(variabledata ?? []);
+  const [variables, setVariables] = useState([]);
   // form.setFieldsValue({ variables: variabledata });
 
   const handleAddVariable = () => {
@@ -27,14 +27,15 @@ const CreateVariableModal = ({ visible, setVisible, onCreate, onCancel, scenario
 
   const onFinish = values => {
     console.log("OnFinishvalues", values)
-    console.log("ddd");
+    console.log("ddd",variabledata);
+     
     mutate(
       {
         resource: "scenarios",
         id: scenarioid,
 
         values: {
-          ...values,
+          variables:[...values.variables,...variabledata],
         },
       },
       {
