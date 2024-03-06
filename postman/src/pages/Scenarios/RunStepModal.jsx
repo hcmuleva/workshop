@@ -4,6 +4,78 @@ import { DeleteButton } from '@refinedev/antd';
 import axios from "axios";
 import { useUpdate } from '@refinedev/core';
 
+const API_URL = import.meta.env.VITE_SERVER_API
+
+function getValueByPath(obj, path) {
+    const keys = path.split('.');
+    let value = obj;
+    for (const key of keys) {
+        if (typeof value === 'object' && value !== null) {
+            value = value[key];
+        } else {
+            return null;
+        }
+    }
+    return value;
+}
+
+async function handleScenarioVariableObject(scenarioVariables,stepData) {
+     
+    // console.log(variabledata);
+    const a={}
+    
+    for (const variable of scenarioVariables) {
+        if ('step' in variable && variable.step!=stepData.id) {
+             
+            const response = await fetch(`${API_URL}/api/steps/${variable['step']}`);
+            
+            if (response.status === 200) {
+                const responseData = await response.json();
+                // console.log(responseData['data']['attributes']['response']);
+                a[variable['name']]=getValueByPath(responseData['data']['attributes']['response'], variable['value']);
+            }
+        }else{
+            a[variable['name']]=variable['value']
+        }
+        
+    }
+    return a;
+}
+
+function replaceVariable(scenarioVariables) {
+    return function(match, variableName) {
+        if (scenarioVariables.hasOwnProperty(variableName)) {
+            return scenarioVariables[variableName];
+        } else {
+            return match;
+        }
+    };
+}
+
+function updateVariables(data, scenarioVariables) {
+    const replace = replaceVariable(scenarioVariables);
+
+    if (typeof data === 'object') {
+        if (Array.isArray(data)) {
+            return data.map(item => updateVariables(item, scenarioVariables));
+        } else {
+            const updatedData = {};
+            for (const key in data) {
+                if (data.hasOwnProperty(key)) {
+                    updatedData[key] = updateVariables(data[key], scenarioVariables);
+                }
+            }
+            return updatedData;
+        }
+    } else if (typeof data === 'string') {
+        return data.replace(/\{\{(\w+)\}\}/g, replace);
+    } else {
+        return data;
+    }
+}
+
+
+
 
 const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData }) => {
     // console.log("variabledata", variabledata)
@@ -34,25 +106,38 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
         setHeaderVariables(updatedHeaderVariables);
     };
 
-    const onFinish = (values) => {
-        console.log("OnFinishvalues", values)
+    const onFinish = async (values) => {
+        // console.log("OnFinishvalues", values,headerVariables)
         
         // console.log("ddd");
-        const { headers, payload, url, requesttype } = values
+        const { payload, url, requesttype } = values
+        const header_obj=Object.fromEntries(headerVariables.map(d=>[d.name,d.value]))
+        const scenarioVariables=await handleScenarioVariableObject(variabledata,stepData)
+        // console.log(header_obj);
+
+        const updatedUrl=updateVariables(url,scenarioVariables)
+        const updatedHeaders=updateVariables(header_obj,scenarioVariables)
+        const updatedPayload=updateVariables(JSON.parse(payload),scenarioVariables)
+
+
+        console.log(updatedHeaders);
+         
+         
+         
         let axiosRequest;
         
         switch (requesttype.toUpperCase()) {
             case 'GET':
-                axiosRequest = axios.get(url, { headers });
+                axiosRequest = axios.get(updatedUrl, { headers:updatedHeaders });
                 break;
             case 'POST':
-                axiosRequest = axios.post(url,JSON.parse(payload), { headers });
+                axiosRequest = axios.post(updatedUrl,updatedPayload, { headers:updatedHeaders });
                 break;
             case 'PUT':
-                axiosRequest = axios.put(url,JSON.parse(payload), { headers });
+                axiosRequest = axios.put(updatedUrl,updatedPayload, { headers:updatedHeaders});
                 break;
             case 'DELETE':
-                axiosRequest = axios.delete(url, { headers });
+                axiosRequest = axios.delete(updatedUrl, { headers:updatedHeaders });
                 break;
             default:
                 throw new Error('Unsupported request type');
@@ -76,7 +161,7 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
         });
 
 
-        // updateScenarioField(scenarioid,values.variables);
+        // // updateScenarioField(scenarioid,values.variables);
         form.resetFields();
         setStepData()
         setVariables([]);
@@ -148,7 +233,7 @@ const RunStepModal = ({ visible, setVisible, variabledata, stepData, setStepData
                     form
                         .validateFields()
                         .then(values => {
-                            console.log("OnOKvalues", values)
+                            // console.log("OnOKvalues", values)
                             onFinish(values);
                         })
                         .catch(info => {

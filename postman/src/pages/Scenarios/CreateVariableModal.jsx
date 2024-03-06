@@ -5,15 +5,17 @@ import axios from "axios";
 import { useUpdate } from '@refinedev/core';
 
 
-const CreateVariableModal = ({ visible, setVisible, onCreate, onCancel, scenarioid, variabledata }) => {
-  // console.log("variabledata",variabledata)
+
+const CreateVariableModal = ({ visible, setVisible, onCreate, onCancel, record }) => {
+  // console.log("record.variables",record.variables)
   const { mutate } = useUpdate();
 
+  // console.log(record);
 
 
   const [form] = Form.useForm();
   const [variables, setVariables] = useState([]);
-  // form.setFieldsValue({ variables: variabledata });
+  // form.setFieldsValue({ variables: record.variables });
 
   const handleAddVariable = () => {
     setVariables([...variables, { name: '', value: '' }]);
@@ -27,15 +29,15 @@ const CreateVariableModal = ({ visible, setVisible, onCreate, onCancel, scenario
 
   const onFinish = values => {
     console.log("OnFinishvalues", values)
-    console.log("ddd",variabledata);
-     
+    console.log("ddd", record.variables);
+
     mutate(
       {
         resource: "scenarios",
-        id: scenarioid,
+        id: record.id,
 
         values: {
-          variables:[...values.variables,...variabledata],
+          variables: [...values.variables, ...record.variables],
         },
       },
       {
@@ -45,7 +47,7 @@ const CreateVariableModal = ({ visible, setVisible, onCreate, onCancel, scenario
         },
       },
     );
-    //updateScenarioField(scenarioid,values.variables);
+    //updateScenarioField(record.id,values.variables);
     form.resetFields();
 
     setVariables([]);
@@ -86,6 +88,19 @@ const CreateVariableModal = ({ visible, setVisible, onCreate, onCancel, scenario
                 style={{ display: 'inline-block', width: 'calc(55% - 16px)', marginRight: 8 }}
               >
                 <Input placeholder="Variable Value" />
+              </Form.Item>
+              <Form.Item
+                name={['variables', index, 'step']}
+                style={{ display: 'inline-block', width: 'calc(30% - 16px)', marginRight: 8 }}
+              >
+                <Select
+                  options={record?.steps?.map((step) => ({
+                    label: step.name,
+                    value: step.id,
+                  }))}
+                  placeholder={("step")}
+                  allowClear={true}
+                ></Select>
               </Form.Item>
               <Button type="dashed" danger onClick={() => handleRemoveVariable(index)}>
                 X

@@ -28,7 +28,7 @@ const App = () => {
                     {
                         name: "scenarios",
                         list: ScenarioList,
-                        show: ScenarioShow
+                        show: ScenarioShow,
 
                     },
                 ]}

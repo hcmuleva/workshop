@@ -81,6 +81,7 @@ export const ScenarioShow = () => {
       dataIndex: 'value',
       key: 'value',
     },
+     
     {
       title: 'Actions',
       key: 'actions',
@@ -90,7 +91,7 @@ export const ScenarioShow = () => {
 
             const updatedVariables = [...record.variables];
             updatedVariables.splice(data_index, 1);
-            console.log("updatedVariables", updatedVariables)
+            // console.log("updatedVariables", updatedVariables)
             mutate(
               {
                 resource: "scenarios",
@@ -130,15 +131,15 @@ export const ScenarioShow = () => {
         </Space>
       </Card>
       <br />
-      <Table columns={variablecolumns} dataSource={record?.variables ?? []} pagination={false}
+      <Table columns={variablecolumns} dataSource={record?.variables} pagination={false}
       />
       <Space>
 
 
       </Space>
-      <CreateVariableModal visible={variableVisible} setVisible={setVariableVisible} scenarioid={record.id} variabledata={record.variables} />
+      <CreateVariableModal visible={variableVisible} setVisible={setVariableVisible} record={record} />
       <CreateStepModal visible={visible} setVisible={setVisible} scenarioid={record.id} />
-      <RunStepModal visible={stepVisible} setVisible={setStepVisible}  variabledata={record.variables} stepData={selectedStepData} setStepData={setSelectedStepData}/>
+      <RunStepModal visible={stepVisible} setVisible={setStepVisible}  variabledata={record?.variables} stepData={selectedStepData} setStepData={setSelectedStepData}/>
       <RunScenarioModel runModalOpen={runModalOpen} setRunModalOpen={setRunModalOpen} scenarioid={record.id}></RunScenarioModel>
       <br />
 
